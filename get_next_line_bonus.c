@@ -6,7 +6,7 @@
 /*   By: bfresque <bfresque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 11:45:45 by bfresque          #+#    #+#             */
-/*   Updated: 2022/12/12 11:13:21 by bfresque         ###   ########.fr       */
+/*   Updated: 2022/12/13 14:47:04 by bfresque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,3 +105,25 @@ char	*get_next_line(int fd)
 	str[fd] = ft_read_after(str[fd]);
 	return (line);
 }
+
+// int main()
+// {
+// 	int		i;
+// 	int		fd1;
+// 	int		fd2;
+// 	char	*str1;
+// 	char	*str2;
+// 	fd1 = open("test.txt", O_RDONLY);
+// 	fd2 = open("Celine.txt", O_RDONLY);
+// 	i = 0;
+// 	 while(i < 50)
+// 	{
+// 		str1 =get_next_line(fd1);
+// 		printf("%s", str1);
+// 		str2 = (get_next_line(fd2));
+// 		printf("%s", str2);
+// 		free(str1);
+// 		free(str2);
+// 		i++;
+// 	}
+// }
