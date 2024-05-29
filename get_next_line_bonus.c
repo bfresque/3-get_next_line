@@ -6,7 +6,7 @@
 /*   By: bfresque <bfresque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 11:45:45 by bfresque          #+#    #+#             */
-/*   Updated: 2022/12/13 14:47:04 by bfresque         ###   ########.fr       */
+/*   Updated: 2022/12/14 12:47:03 by bfresque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*ft_free(char *str, char *buffer)
 	return (temp);
 }
 
-char	*ft_read_before(char *str)
+char	*ft_line(char *str)
 {
 	char	*dest;
 	int		i;
@@ -43,7 +43,7 @@ char	*ft_read_before(char *str)
 	return (dest);
 }
 
-char	*ft_read_after(char *str)
+char	*ft_buf(char *str)
 {
 	int		i;
 	int		j;
@@ -65,16 +65,20 @@ char	*ft_read_after(char *str)
 	return (dest);
 }
 
-char	*ft_read(int fd, char *str)
+char	*get_next_line(int fd)
 {
-	char	*buffer;
-	int		i;
+	static char	*str[4096];
+	char		*buffer;
+	char		*line;
+	int			i;
 
-	if (!str)
-		str = ft_calloc(1, 1);
-	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	i = 1;
-	while (i > 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (str[fd] == 0)
+		str[fd] = ft_calloc(1, 1);
+	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	while (i > 0 && !(ft_strchr(buffer, '\n')))
 	{
 		i = read(fd, buffer, BUFFER_SIZE);
 		if (i == -1)
@@ -82,28 +86,11 @@ char	*ft_read(int fd, char *str)
 			free(buffer);
 			return (NULL);
 		}
-		buffer[i] = 0;
-		str = ft_free(str, buffer);
-		if (ft_strchr(buffer, '\n'))
-			break ;
+		buffer[i] = '\0';
+		str[fd] = ft_free(str[fd], buffer);
 	}
 	free(buffer);
-	return (str);
-}
-
-char	*get_next_line(int fd)
-{
-	static char	*str[_SC_OPEN_MAX];
-	char		*line;
-
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-		return (NULL);
-	str[fd] = ft_read(fd, str[fd]);
-	if (!str[fd])
-		return (NULL);
-	line = ft_read_before(str[fd]);
-	str[fd] = ft_read_after(str[fd]);
-	return (line);
+	return (line = ft_line(str[fd]), str[fd] = ft_buf(str[fd]), line);
 }
 
 // int main()

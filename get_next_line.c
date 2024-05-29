@@ -6,7 +6,7 @@
 /*   By: bfresque <bfresque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/02 11:24:07 by bfresque          #+#    #+#             */
-/*   Updated: 2022/12/13 14:46:55 by bfresque         ###   ########.fr       */
+/*   Updated: 2022/12/14 12:46:53 by bfresque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*ft_free(char *str, char *buffer)
 	return (temp);
 }
 
-char	*ft_read_before(char *str)
+char	*ft_line(char *str)
 {
 	char	*dest;
 	int		i;
@@ -43,7 +43,7 @@ char	*ft_read_before(char *str)
 	return (dest);
 }
 
-char	*ft_read_after(char *str)
+char	*ft_buf(char *str)
 {
 	int		i;
 	int		j;
@@ -65,16 +65,20 @@ char	*ft_read_after(char *str)
 	return (dest);
 }
 
-char	*ft_read(int fd, char *str)
+char	*get_next_line(int fd)
 {
-	char	*buffer;
-	int		i;
+	static char	*str;
+	char		*buffer;
+	char		*line;
+	int			i;
 
-	if (!str)
+	i = 1;
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (str == 0)
 		str = ft_calloc(1, 1);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	i = 1;
-	while (i > 0)
+	while (i > 0 && !(ft_strchr(buffer, '\n')))
 	{
 		i = read(fd, buffer, BUFFER_SIZE);
 		if (i == -1)
@@ -82,28 +86,11 @@ char	*ft_read(int fd, char *str)
 			free(buffer);
 			return (NULL);
 		}
-		buffer[i] = 0;
+		buffer[i] = '\0';
 		str = ft_free(str, buffer);
-		if (ft_strchr(buffer, '\n'))
-			break ;
 	}
 	free(buffer);
-	return (str);
-}
-
-char	*get_next_line(int fd)
-{
-	static char	*str;
-	char		*line;
-
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-		return (NULL);
-	str = ft_read(fd, str);
-	if (!str)
-		return (NULL);
-	line = ft_read_before(str);
-	str = ft_read_after(str);
-	return (line);
+	return (line = ft_line(str), str = ft_buf(str), line);
 }
 
 // int main()
